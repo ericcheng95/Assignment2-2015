@@ -2,6 +2,8 @@
 var express = require('express');
 var passport = require('passport');
 var InstagramStrategy = require('passport-instagram').Strategy;
+// Facebook element
+var FacebookStrategy = require('passport-facebook').Strategy;
 var http = require('http');
 var path = require('path');
 var handlebars = require('express-handlebars');
@@ -12,6 +14,8 @@ var dotenv = require('dotenv');
 var mongoose = require('mongoose');
 var Instagram = require('instagram-node-lib');
 var async = require('async');
+// Facebook element
+var graph = require('fbgraph');
 var app = express();
 
 //local dependencies
@@ -24,6 +28,11 @@ var INSTAGRAM_CLIENT_SECRET = process.env.INSTAGRAM_CLIENT_SECRET;
 var INSTAGRAM_CALLBACK_URL = process.env.INSTAGRAM_CALLBACK_URL;
 Instagram.set('client_id', INSTAGRAM_CLIENT_ID);
 Instagram.set('client_secret', INSTAGRAM_CLIENT_SECRET);
+
+// Facebook element
+var FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
+var FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
+var FACEBOOK_CALLBACK_URL = process.env.FACEBOOK_CALLBACK_URL;
 
 //connect to database
 mongoose.connect(process.env.MONGODB_CONNECTION_URL);
@@ -99,6 +108,38 @@ passport.use(new InstagramStrategy({
   }
 ));
 
+// Facebook element
+// Use the FacebookStrategy within Passport.
+passport.use(new FacebookStrategy({
+    clientID: FACEBOOK_APP_ID,
+    clientSecret: FACEBOOK_APP_SECRET,
+    callbackURL: FACEBOOK_CALLBACK_URL
+},
+  function (accessToken, refreshToken, profile, done) {
+      models.User.findOrCreate({
+          "name": profile.username,
+          "id": profile.id,
+          "access_token": accessToken
+      }, function (err, user, created) {
+
+          // created will be true here
+          models.User.findOrCreate({}, function (err, user, created) {
+              // created will be false here
+              process.nextTick(function () {
+                  graph.setAccessToken(accessToken);
+                  graph.setAppSecret(FACEBOOK_APP_SECRET);
+
+                  // To keep the example simple, the user's Instagram profile is returned to
+                  // represent the logged-in user.  In a typical application, you would want
+                  // to associate the Instagram account with a user record in your database,
+                  // and return that user instead.
+                  return done(null, profile);
+              });
+          })
+      });
+  }
+));
+//-----------------------------------
 
 //Configures the Template engine
 app.engine('handlebars', handlebars({defaultLayout: 'layout'}));
@@ -148,7 +189,15 @@ app.get('/login', function(req, res){
 });
 
 app.get('/account', ensureAuthenticated, function(req, res){
-  res.render('account', {user: req.user});
+    res.render('account', {user: req.user});
+    /*var temp = {};
+    temp.user = req.user;
+    if (req.user.provider === 'instagram') {
+        res.render('account', { instagramAcct: temp });
+    }
+    else if (req.user.provider === 'facebook') {
+        res.render('account', { fbAcct: temp });
+    }*/
 });
 
 app.get('/igphotos', ensureAuthenticatedInstagram, function(req, res){
@@ -237,6 +286,26 @@ app.get('/auth/instagram/callback',
   function(req, res) {
     res.redirect('/account');
   });
+
+//---------------------------------------------------
+// Redirect the user to Facebook for authentication.  When complete,
+// Facebook will redirect the user back to the application at
+//     /auth/facebook/callback
+app.get('/auth/facebook',
+  passport.authenticate('facebook', { scope: ['user_likes', 'user_photos', 'read_stream'] }),
+  function (req, res) { });
+
+
+// Facebook will redirect the user to this URL after approval.  Finish the
+// authentication process by attempting to obtain an access token.  If
+// access was granted, the user will be logged in.  Otherwise,
+// authentication has failed.
+app.get('/auth/facebook/callback',
+  passport.authenticate('facebook', {
+      successRedirect: '/account',
+      failureRedirect: '/login'
+  }));
+//---------------------------------------------------
 
 app.get('/logout', function(req, res){
   req.logout();
