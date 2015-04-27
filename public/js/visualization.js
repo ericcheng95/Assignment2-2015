@@ -26,6 +26,14 @@ var svg = d3.select("body").append("svg")
   .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+//hovering bar implementation
+/*var mapMouseOver(d){
+    d3.selectAll($("#" + d.id))
+    .style("fill", "red")
+    .style("stroke", "blue");
+}
+d3.select(this);*/
+
 //get json object which contains media counts
 d3.json('/igMediaCounts', function(error, data) {
 
@@ -67,8 +75,12 @@ d3.json('/igMediaCounts', function(error, data) {
     .data(data.users)
     .enter().append("rect")
     .attr("class", "bar")
-    .attr("x", function(d) { return scaleX(d.username); })
+    .attr("x", function (d) { return scaleX(d.username); })
     .attr("width", scaleX.rangeBand())
-    .attr("y", function(d) { return scaleY(d.counts.media); })
-    .attr("height", function(d) { return height - scaleY(d.counts.media); });
+    .attr("y", function (d) { return scaleY(d.counts.media); })
+    .attr("height", function (d) { return height - scaleY(d.counts.media); })
+    .on("mouseover", function () {
+        //d3.select(this).classed("highlight", true);
+        //Status goes here
+    });
 });
