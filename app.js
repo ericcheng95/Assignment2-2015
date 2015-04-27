@@ -14,8 +14,10 @@ var dotenv = require('dotenv');
 var mongoose = require('mongoose');
 var Instagram = require('instagram-node-lib');
 var async = require('async');
+
 // Facebook element
 var graph = require('fbgraph');
+
 var app = express();
 
 //local dependencies
