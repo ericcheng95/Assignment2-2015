@@ -26,6 +26,10 @@ var svg = d3.select("body").append("svg")
   .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+
+var focus = svg.append("g")
+  .style("display", "none");
+
 //get json object which contains media counts
 d3.json('/igMediaCounts', function(error, data) {
 
@@ -70,5 +74,15 @@ d3.json('/igMediaCounts', function(error, data) {
     .attr("x", function(d) { return scaleX(d.username); })
     .attr("width", scaleX.rangeBand())
     .attr("y", function(d) { return scaleY(d.counts.media); })
-    .attr("height", function(d) { return height - scaleY(d.counts.media); });
+    .attr("height", function(d) { return height - scaleY(d.counts.media); })
+    //.attr("hover", function(d) {return })
+    .text("TEST")
+    .on('mouseover', function(d) {
+      d3.select(this).style({opacity:'1.0',})
+      d3.select(this).select("text").style({opacity:'1.0'});
+    })
+    .on('mouseout', function(d) {
+      d3.select(this).style({opacity:'1.0'})
+      d3.select(this).select("text").style({opacity:'0.0'});
+    });
 });
