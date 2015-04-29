@@ -395,11 +395,11 @@ app.get('/twitter', ensureAuthenticated, function (req, res) {
 
 // Twitter element
 app.get('/visualizationTwitter', ensureAuthenticated, function (req, res) {
-    res.render('visualization');
+    res.render('visualizationTwitter');
 });
 
 app.get('/c3visualizationTwitter', ensureAuthenticated, function (req, res) {
-    res.render('c3visualization');
+    res.render('c3visualizationTwitter');
 });
 
 app.get('/logout', function(req, res){
