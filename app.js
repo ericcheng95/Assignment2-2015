@@ -22,7 +22,6 @@ var graph = require('fbgraph');
 var twit = require('twit');
 var util = require('util');
 var passportTwitterStrategy = require('passport-twitter').Strategy;
-//------------------------
 
 var app = express();
 
@@ -49,9 +48,6 @@ var TWITTER_CLIENT_ID = process.env.TWITTER_CLIENT_ID;
 var TWITTER_CLIENT_SECRET = process.env.TWITTER_CLIENT_SECRET;
 var TWITTER_ACCESS_TOKEN = process.env.TWITTER_ACCESS_TOKEN;
 var TWITTER_ACCESS_SECRET = process.env.TWITTER_ACCESS_SECRET;
-// (have two blank strings for access token and access secret)
-/*var accessToken = "";
-var accessSecret = "";*/
 var twitterOauth = {
     consumer_key: TWITTER_CLIENT_ID,
     consumer_secret: TWITTER_CLIENT_SECRET,
@@ -81,7 +77,6 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
-
 
 // Use the InstagramStrategy within Passport.
 //   Strategies in Passport require a `verify` function, which accept
@@ -167,18 +162,18 @@ passport.use(new FacebookStrategy({
 //-----------------------------------
 
 // Twitter element
-//Use TwitterStrategy with passport
+// Use TwitterStrategy with passport
 passport.use(new passportTwitterStrategy({
     consumerKey: process.env.twitter_client_id,
     consumerSecret: process.env.twitter_client_secret,
     callbackURL: "http://localhost:3000/auth/twitter/callback"
 }, function (token, tokenSecret, profile, done) {
-    //setting up access token
+    // Setting up access token (To ensure)
     accessToken = token;
     accessSecret = tokenSecret;
     twitterOauth.access_token = token;
     twitterOauth.access_token_secret = tokenSecret;
-    //Continuing on
+    // Continuing on
     process.nextTick(function () {
         return done(null, profile);
     });
@@ -214,14 +209,12 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/login');
 }
 
-
 function ensureAuthenticatedInstagram(req, res, next) {
   if (req.isAuthenticated() && !!req.user.ig_id) { 
     return next(); 
   }
   res.redirect('/login');
 }
-
 
 //routes
 app.get('/', function(req, res){
@@ -234,14 +227,6 @@ app.get('/login', function(req, res){
 
 app.get('/account', ensureAuthenticated, function(req, res){
     res.render('account', {user: req.user});
-    /*var temp = {};
-    temp.user = req.user;
-    if (req.user.provider === 'instagram') {
-        res.render('account', { instagramAcct: temp });
-    }
-    else if (req.user.provider === 'facebook') {
-        res.render('account', { fbAcct: temp });
-    }*/
 });
 
 app.get('/igphotos', ensureAuthenticatedInstagram, function(req, res){
@@ -313,7 +298,6 @@ app.get('/visualization', ensureAuthenticatedInstagram, function (req, res){
   res.render('visualization');
 }); 
 
-
 app.get('/c3visualization', ensureAuthenticatedInstagram, function (req, res){
   res.render('c3visualization');
 }); 
@@ -330,6 +314,7 @@ app.get('/auth/instagram/callback',
   function(req, res) {
     res.redirect('/account');
   });
+
 // Facebook element
 //---------------------------------------------------
 // Redirect the user to Facebook for authentication.  When complete,
@@ -338,7 +323,6 @@ app.get('/auth/instagram/callback',
 /*app.get('/auth/facebook',
   passport.authenticate('facebook', { scope: ['user_likes', 'user_photos', 'read_stream'] }),
   function (req, res) { });
-
 
 // Facebook will redirect the user to this URL after approval.  Finish the
 // authentication process by attempting to obtain an access token.  If
@@ -385,25 +369,24 @@ app.get('/UserHasLoggedIn', function (req, res) {
 //---------------------------------------------------
 // Twitter element
 //---------------------------------------------------
-//twitter authentication Oauth setup
-//this will set up twitter oauth for any user not just one
+// Twitter authentication setup for Oauth
+// Will set up Twitter Oauth for any user not just one
 app.get('/auth/twitter', passport.authenticate('twitter'), function (req, res) {
     //nothing here because callback redirects to /auth/twitter/callback
 });
 
-//callback. authenticates again and then goes to twitter
+// 'callback' authenticates again and then goes to Twitter
 app.get('/auth/twitter/callback',
 	passport.authenticate('twitter', { failureRedirect: '/' }),
 	function (req, res) {
 	    res.redirect('/twitter');
 	});
 
-
 app.get('/twitter', ensureAuthenticated, function (req, res) {
-    //I can use twitterOauth as previously it's an array set up with the correcet information
+    // Use Twitter's Oauth as previously it's an array set up with the information
     var T = new twit(twitterOauth);
     T.get('/friends/list', function (err, reply) {
-        console.log(err); //If there is an error this will return a value
+        console.log(err); // If there is an error this will return a value
         data = { twitterData: reply };
         res.render('twitter', data);
     });
