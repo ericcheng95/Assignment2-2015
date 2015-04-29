@@ -21,7 +21,7 @@ var graph = require('fbgraph');
 // Twitter element
 var twit = require('twit');
 var util = require('util');
-var passportTwitterStrategy = require('passport-twitter').Strategy;
+var TwitterStrategy = require('passport-twitter').Strategy;
 
 var app = express();
 
@@ -163,7 +163,7 @@ passport.use(new FacebookStrategy({
 
 // Twitter element
 // Use TwitterStrategy with passport
-passport.use(new passportTwitterStrategy({
+/*passport.use(new TwitterStrategy({
     consumerKey: process.env.twitter_client_id,
     consumerSecret: process.env.twitter_client_secret,
     callbackURL: "http://localhost:3000/auth/twitter/callback"
@@ -177,7 +177,49 @@ passport.use(new passportTwitterStrategy({
     process.nextTick(function () {
         return done(null, profile);
     });
-}));
+}));*/
+
+passport.use(new TwitterStrategy({
+    consumerKey: process.env.TWITTER_CLIENT_ID,
+    consumerSecret: process.env.TWITTER_CLIENT_SECRET,
+    callbackURL: "http://localhost:3000/auth/twitter/callback"
+}, function (accessToken, refreshToken, profile, done) {
+    // Setting up access token (To ensure)
+    twitterOauth.access_token = accessToken;
+    twitterOauth.access_token_secret = refreshToken;
+      // asynchronous verification, for effect...
+      models.User.findOne({
+          "tw_id": profile.id
+      }, function (err, user) {
+          if (err) {
+              return done(err);
+          }
+          //didnt find a user
+          if (!user) {
+              newUser = new models.User({
+                  name: profile.username,
+                  tw_id: profile.id,
+                  tw_access_token: accessToken
+              });
+              newUser.save(function (err) {
+                  if (err) {
+                      console.log(err);
+                  } else {
+                      console.log('user: ' + newUser.name + " created.");
+                  }
+                  return done(null, newUser);
+              });
+          } else {
+              //update user here
+              user.tw_access_token = accessToken;
+              user.save();
+              process.nextTick(function () {
+                  return done(null, user);
+              });
+          }
+      });
+  }
+));
 //-----------------------------------
 
 //Configures the Template engine
@@ -203,8 +245,16 @@ app.set('port', process.env.PORT || 3000);
 //   the request will proceed.  Otherwise, the user will be redirected to the
 //   login page.
 function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { 
+  if (req.isAuthenticated()) {
     return next(); 
+  }
+  res.redirect('/login');
+}
+
+// Twitter element
+function ensureAuthenticatedTwitter(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
   }
   res.redirect('/login');
 }
@@ -225,7 +275,10 @@ app.get('/login', function(req, res){
   res.render('login', { user: req.user });
 });
 
-app.get('/account', ensureAuthenticated, function(req, res){
+app.get('/account', ensureAuthenticated, function (req, res) {
+    /*var temp = {};
+    temp.user = req.user;
+    res.render('account', { instagramAcct: temp });*/
     res.render('account', {user: req.user});
 });
 
@@ -266,7 +319,7 @@ app.get('/igMediaCounts', ensureAuthenticatedInstagram, function(req, res){
           // an array of asynchronous functions
           var asyncTasks = [];
           var mediaCounts = [];
-           
+           ig_id
           data.forEach(function(item){
             asyncTasks.push(function(callback){
               // asynchronous function!
@@ -382,7 +435,7 @@ app.get('/auth/twitter/callback',
 	    res.redirect('/twitter');
 	});
 
-app.get('/twitter', ensureAuthenticated, function (req, res) {
+app.get('/twitter', ensureAuthenticatedTwitter, function (req, res) {
     // Use Twitter's Oauth as previously it's an array set up with the information
     var T = new twit(twitterOauth);
     T.get('/users/show', function (err, reply) {
@@ -390,11 +443,15 @@ app.get('/twitter', ensureAuthenticated, function (req, res) {
         data = { twitterUser: reply };
         res.render('twitterMain', data);
     });
+    /*  var temp = {};
+        temp.user = req.user;
+        //res.render('account', { instagramAcct: temp });
+        res.render('twitterMain', { user: temp });*/
 });
 //---------------------------------------------------
 
 // Twitter element
-app.get('/visualizationTwitter', ensureAuthenticated, function (req, res) {
+app.get('/visualizationTwitter', ensureAuthenticatedTwitter, function (req, res) {
     var T = new twit(twitterOauth);
     T.get('/friends/list', function (err, reply) {
         console.log(err); // If there is an error this will return a value
@@ -403,7 +460,7 @@ app.get('/visualizationTwitter', ensureAuthenticated, function (req, res) {
     });
 });
 
-app.get('/c3visualizationTwitter', ensureAuthenticated, function (req, res) {
+app.get('/c3visualizationTwitter', ensureAuthenticatedTwitter, function (req, res) {
     var T = new twit(twitterOauth);
     T.get('/friends/list', function (err, reply) {
         console.log(err); // If there is an error this will return a value
