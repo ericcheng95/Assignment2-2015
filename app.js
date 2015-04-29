@@ -385,9 +385,9 @@ app.get('/auth/twitter/callback',
 app.get('/twitter', ensureAuthenticated, function (req, res) {
     // Use Twitter's Oauth as previously it's an array set up with the information
     var T = new twit(twitterOauth);
-    T.get('/friends/list', function (err, reply) {
+    T.get('/users/show', function (err, reply) {
         console.log(err); // If there is an error this will return a value
-        data = { twitterData: reply };
+        data = { twitterUser: reply };
         res.render('twitterMain', data);
     });
 });
@@ -395,11 +395,21 @@ app.get('/twitter', ensureAuthenticated, function (req, res) {
 
 // Twitter element
 app.get('/visualizationTwitter', ensureAuthenticated, function (req, res) {
-    res.render('visualizationTwitter');
+    var T = new twit(twitterOauth);
+    T.get('/friends/list', function (err, reply) {
+        console.log(err); // If there is an error this will return a value
+        data = { twitterData: reply };
+        res.render('visualizationTwitter', data);
+    });
 });
 
 app.get('/c3visualizationTwitter', ensureAuthenticated, function (req, res) {
-    res.render('c3visualizationTwitter');
+    var T = new twit(twitterOauth);
+    T.get('/friends/list', function (err, reply) {
+        console.log(err); // If there is an error this will return a value
+        data = { twitterData: reply };
+        res.render('c3visualizationTwitter', data);
+    });
 });
 
 app.get('/logout', function(req, res){
