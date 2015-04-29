@@ -22,15 +22,6 @@ var graph = require('fbgraph');
 var twit = require('twit');
 var util = require('util');
 var passportTwitterStrategy = require('passport-twitter').Strategy;
-// (have two blank strings for access token and access secret)
-/*var accessToken = "";
-var accessSecret = "";
-var twitterOauth = {
-    consumer_key: process.env.twitter_client_id,
-    consumer_secret: process.env.twitter_client_secret,
-    access_token: accessToken,
-    access_token_secret: accessSecret
-};*/
 //------------------------
 
 var app = express();
@@ -52,6 +43,21 @@ var FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
 var FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
 var FACEBOOK_CALLBACK_URL = process.env.FACEBOOK_CALLBACK_URL;
 var FACEBOOK_ACCESS_TOKEN = "";
+
+// Twitter element
+var TWITTER_CLIENT_ID = process.env.TWITTER_CLIENT_ID;
+var TWITTER_CLIENT_SECRET = process.env.TWITTER_CLIENT_SECRET;
+var TWITTER_ACCESS_TOKEN = process.env.TWITTER_ACCESS_TOKEN;
+var TWITTER_ACCESS_SECRET = process.env.TWITTER_ACCESS_SECRET;
+// (have two blank strings for access token and access secret)
+/*var accessToken = "";
+var accessSecret = "";*/
+var twitterOauth = {
+    consumer_key: TWITTER_CLIENT_ID,
+    consumer_secret: TWITTER_CLIENT_SECRET,
+    access_token: TWITTER_ACCESS_TOKEN,
+    access_token_secret: TWITTER_ACCESS_SECRET
+};
 
 //connect to database
 mongoose.connect(process.env.MONGODB_CONNECTION_URL);
@@ -162,7 +168,7 @@ passport.use(new FacebookStrategy({
 
 // Twitter element
 //Use TwitterStrategy with passport
-/*passport.use(new passportTwitterStrategy({
+passport.use(new passportTwitterStrategy({
     consumerKey: process.env.twitter_client_id,
     consumerSecret: process.env.twitter_client_secret,
     callbackURL: "http://localhost:3000/auth/twitter/callback"
@@ -176,7 +182,7 @@ passport.use(new FacebookStrategy({
     process.nextTick(function () {
         return done(null, profile);
     });
-}));*/
+}));
 //-----------------------------------
 
 //Configures the Template engine
@@ -381,7 +387,7 @@ app.get('/UserHasLoggedIn', function (req, res) {
 //---------------------------------------------------
 //twitter authentication Oauth setup
 //this will set up twitter oauth for any user not just one
-/*app.get('/auth/twitter', passport.authenticate('twitter'), function (req, res) {
+app.get('/auth/twitter', passport.authenticate('twitter'), function (req, res) {
     //nothing here because callback redirects to /auth/twitter/callback
 });
 
@@ -401,7 +407,7 @@ app.get('/twitter', ensureAuthenticated, function (req, res) {
         data = { twitterData: reply };
         res.render('twitter', data);
     });
-});*/
+});
 //---------------------------------------------------
 
 app.get('/logout', function(req, res){
