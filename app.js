@@ -388,7 +388,7 @@ app.get('/twitter', ensureAuthenticated, function (req, res) {
     T.get('/friends/list', function (err, reply) {
         console.log(err); // If there is an error this will return a value
         data = { twitterData: reply };
-        res.render('twitter', data);
+        res.render('twitterMain', data);
     });
 });
 //---------------------------------------------------
