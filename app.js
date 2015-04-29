@@ -469,6 +469,15 @@ app.get('/c3visualizationTwitter', ensureAuthenticatedTwitter, function (req, re
     });
 });
 
+app.get('/TwitterTest', ensureAuthenticatedTwitter, function (req, res) {
+    var T = new twit(twitterOauth);
+    T.get('/friends/list', function (err, reply) {
+        console.log(err); // If there is an error this will return a value
+        data = { twitterData: reply };
+        res.render('twitter', data);
+    });
+});
+
 app.get('/logout', function(req, res){
   req.logout();
   res.redirect('/');
