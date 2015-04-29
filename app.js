@@ -300,7 +300,7 @@ app.get('/visualization', ensureAuthenticatedInstagram, function (req, res){
 
 app.get('/c3visualization', ensureAuthenticatedInstagram, function (req, res){
   res.render('c3visualization');
-}); 
+});
 
 app.get('/auth/instagram',
   passport.authenticate('instagram'),
@@ -392,6 +392,15 @@ app.get('/twitter', ensureAuthenticated, function (req, res) {
     });
 });
 //---------------------------------------------------
+
+// Twitter element
+app.get('/visualizationTwitter', ensureAuthenticated, function (req, res) {
+    res.render('visualization');
+});
+
+app.get('/c3visualizationTwitter', ensureAuthenticated, function (req, res) {
+    res.render('c3visualization');
+});
 
 app.get('/logout', function(req, res){
   req.logout();
