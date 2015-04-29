@@ -18,6 +18,21 @@ var async = require('async');
 // Facebook element
 var graph = require('fbgraph');
 
+// Twitter element
+var twit = require('twit');
+var util = require('util');
+var passportTwitterStrategy = require('passport-twitter').Strategy;
+// (have two blank strings for access token and access secret)
+/*var accessToken = "";
+var accessSecret = "";
+var twitterOauth = {
+    consumer_key: process.env.twitter_client_id,
+    consumer_secret: process.env.twitter_client_secret,
+    access_token: accessToken,
+    access_token_secret: accessSecret
+};*/
+//------------------------
+
 var app = express();
 
 //local dependencies
@@ -143,6 +158,25 @@ passport.use(new FacebookStrategy({
       });
   }
 ));
+//-----------------------------------
+
+// Twitter element
+//Use TwitterStrategy with passport
+/*passport.use(new passportTwitterStrategy({
+    consumerKey: process.env.twitter_client_id,
+    consumerSecret: process.env.twitter_client_secret,
+    callbackURL: "http://localhost:3000/auth/twitter/callback"
+}, function (token, tokenSecret, profile, done) {
+    //setting up access token
+    accessToken = token;
+    accessSecret = tokenSecret;
+    twitterOauth.access_token = token;
+    twitterOauth.access_token_secret = tokenSecret;
+    //Continuing on
+    process.nextTick(function () {
+        return done(null, profile);
+    });
+}));*/
 //-----------------------------------
 
 //Configures the Template engine
@@ -290,12 +324,12 @@ app.get('/auth/instagram/callback',
   function(req, res) {
     res.redirect('/account');
   });
-
+// Facebook element
 //---------------------------------------------------
 // Redirect the user to Facebook for authentication.  When complete,
 // Facebook will redirect the user back to the application at
 //     /auth/facebook/callback
-app.get('/auth/facebook',
+/*app.get('/auth/facebook',
   passport.authenticate('facebook', { scope: ['user_likes', 'user_photos', 'read_stream'] }),
   function (req, res) { });
 
@@ -308,7 +342,66 @@ app.get('/auth/facebook/callback',
   passport.authenticate('facebook', {
       successRedirect: '/account',
       failureRedirect: '/login'
-  }));
+  }));*/
+//fbgraph authentication
+app.get('/auth/facebook', function (req, res) {
+    if (!req.query.code) {
+        var authUrl = graph.getOauthUrl({
+            'client_id': process.env.FACEBOOK_APP_ID,
+            'redirect_uri': 'http://localhost:3000/auth/facebook',
+            'scope': 'user_about_me'//you want to update scope to what you want in your app
+        });
+
+        if (!req.query.error) {
+            res.redirect(authUrl);
+        } else {
+            res.send('access denied');
+        }
+        return;
+    }
+    graph.authorize({
+        'client_id': process.env.FACEBOOK_APP_ID,
+        'redirect_uri': 'http://localhost:3000/auth/facebook',
+        'client_secret': process.env.FACEBOOK_APP_SECRET,
+        'code': req.query.code
+    }, function (err, facebookRes) {
+        res.redirect('/UserHasLoggedIn');
+    });
+});
+
+app.get('/UserHasLoggedIn', function (req, res) {
+    graph.get('me', function (err, response) {
+        console.log(err); //if there is an error this will return a value
+        data = { facebookData: response };
+        res.render('facebook', data);
+    });
+});
+//---------------------------------------------------
+// Twitter element
+//---------------------------------------------------
+//twitter authentication Oauth setup
+//this will set up twitter oauth for any user not just one
+/*app.get('/auth/twitter', passport.authenticate('twitter'), function (req, res) {
+    //nothing here because callback redirects to /auth/twitter/callback
+});
+
+//callback. authenticates again and then goes to twitter
+app.get('/auth/twitter/callback',
+	passport.authenticate('twitter', { failureRedirect: '/' }),
+	function (req, res) {
+	    res.redirect('/twitter');
+	});
+
+
+app.get('/twitter', ensureAuthenticated, function (req, res) {
+    //I can use twitterOauth as previously it's an array set up with the correcet information
+    var T = new twit(twitterOauth);
+    T.get('/friends/list', function (err, reply) {
+        console.log(err); //If there is an error this will return a value
+        data = { twitterData: reply };
+        res.render('twitter', data);
+    });
+});*/
 //---------------------------------------------------
 
 app.get('/logout', function(req, res){
