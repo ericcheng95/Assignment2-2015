@@ -324,14 +324,6 @@ app.get('/auth/instagram/callback',
   function(req, res) {
     res.redirect('/account');
   });
-// Facebook element
-//---------------------------------------------------
-// Redirect the user to Facebook for authentication.  When complete,
-// Facebook will redirect the user back to the application at
-//     /auth/facebook/callback
-/*app.get('/auth/facebook',
-  passport.authenticate('facebook', { scope: ['user_likes', 'user_photos', 'read_stream'] }),
-  function (req, res) { });
 
 
 // Facebook will redirect the user to this URL after approval.  Finish the
@@ -342,14 +334,16 @@ app.get('/auth/facebook/callback',
   passport.authenticate('facebook', {
       successRedirect: '/account',
       failureRedirect: '/login'
-  }));*/
+  }));
+
 //fbgraph authentication
-app.get('/auth/facebook', function (req, res) {
+app.get('/auth/facebook',
+  function(req, res){
     if (!req.query.code) {
         var authUrl = graph.getOauthUrl({
             'client_id': process.env.FACEBOOK_APP_ID,
             'redirect_uri': 'http://localhost:3000/auth/facebook',
-            'scope': 'user_about_me'//you want to update scope to what you want in your app
+            //'scope': 'user_about_me'//you want to update scope to what you want in your app
         });
 
         if (!req.query.error) {
@@ -364,13 +358,13 @@ app.get('/auth/facebook', function (req, res) {
         'redirect_uri': 'http://localhost:3000/auth/facebook',
         'client_secret': process.env.FACEBOOK_APP_SECRET,
         'code': req.query.code
-    }, function (err, facebookRes) {
+    }, function(err, facebookRes) {
         res.redirect('/UserHasLoggedIn');
     });
 });
 
-app.get('/UserHasLoggedIn', function (req, res) {
-    graph.get('me', function (err, response) {
+app.get('/UserHasLoggedIn', function(req, res) {
+    graph.get('me', function(err, response) {
         console.log(err); //if there is an error this will return a value
         data = { facebookData: response };
         res.render('facebook', data);
