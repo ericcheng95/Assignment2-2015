@@ -26,16 +26,16 @@ var svg = d3.select("body").append("svg")
   .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var tip = d3.tip()
+/*var tip = d3.tip()
   .attr('class', 'd3-tip')
   .offset([-10, 0])
   .html(function(d) {
     return "<strong>Media Count: </strong> <span style='color: red'>" +d.counts.media + "</span>";
-  })
+  })*/
 
-svg.call(tip);
+//svg.call(tip);
 
-app.get('/igMediaCounts', ensureAuthenticationInstagram)
+//app.get('/igMediaCounts', ensureAuthenticationInstagram)
 
 //get json object which contains media counts
 d3.json('/igMediaCounts', function(error, data) {
@@ -81,11 +81,11 @@ d3.json('/igMediaCounts', function(error, data) {
     .attr("x", function(d) { return scaleX(d.username); })
     .attr("width", scaleX.rangeBand())
     .attr("y", function(d) { return scaleY(d.counts.media); })
-    .attr("height", function(d) { return height - scaleY(d.counts.media); })
-    .on('mouseover', tip,show)
-    .on('mouseout', tip.hide);
+    .attr("height", function(d) { return height - scaleY(d.counts.media); });
+    /*.on('mouseover', tip,show)
+    .on('mouseout', tip.hide);*/
 
-  d3.select("input").on("click", function() {
+ /*d3.select("input").on("click", function() {
     this.disabled = true;
     var scaleX_sorted = scaleX.domain(data.users.sort(function(a, b){
     return (a.counts.media - b.counts.media);
@@ -100,5 +100,5 @@ d3.json('/igMediaCounts', function(error, data) {
       .call(xAxis)
       .selectAll("text")
       .style("text-anchor", "end")
-  });
+  });*/
 });
