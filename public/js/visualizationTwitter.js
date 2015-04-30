@@ -27,7 +27,7 @@ var svg = d3.select("body").append("svg")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 //get json object which contains media counts
-d3.json('/igMediaCounts', function(error, data) {
+d3.json('/twMediaCounts', function(error, data) {
 
   data.users.sort(function (a, b){
     return (a.counts.media - b.counts.media);
