@@ -37,12 +37,6 @@ var INSTAGRAM_ACCESS_TOKEN = "";
 Instagram.set('client_id', INSTAGRAM_CLIENT_ID);
 Instagram.set('client_secret', INSTAGRAM_CLIENT_SECRET);
 
-// Facebook element
-var FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
-var FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
-var FACEBOOK_CALLBACK_URL = process.env.FACEBOOK_CALLBACK_URL;
-var FACEBOOK_ACCESS_TOKEN = "";
-
 // Twitter element
 var TWITTER_CLIENT_ID = process.env.TWITTER_CLIENT_ID;
 var TWITTER_CLIENT_SECRET = process.env.TWITTER_CLIENT_SECRET;
@@ -127,39 +121,6 @@ passport.use(new InstagramStrategy({
       });
     }
 ));
-
-// Facebook element
-// Use the FacebookStrategy within Passport.
-passport.use(new FacebookStrategy({
-    clientID: FACEBOOK_APP_ID,
-    clientSecret: FACEBOOK_APP_SECRET,
-    callbackURL: FACEBOOK_CALLBACK_URL
-},
-  function (accessToken, refreshToken, profile, done) {
-      models.User.findOrCreate({
-          "name": profile.username,
-          "id": profile.id,
-          "access_token": accessToken
-      }, function (err, user, created) {
-
-          // created will be true here
-          models.User.findOrCreate({}, function (err, user, created) {
-              // created will be false here
-              process.nextTick(function () {
-                  graph.setAccessToken(accessToken);
-                  graph.setAppSecret(FACEBOOK_APP_SECRET);
-
-                  // To keep the example simple, the user's Instagram profile is returned to
-                  // represent the logged-in user.  In a typical application, you would want
-                  // to associate the Instagram account with a user record in your database,
-                  // and return that user instead.
-                  return done(null, profile);
-              });
-          })
-      });
-  }
-));
-//-----------------------------------
 
 // Twitter element
 // Use TwitterStrategy with passport
@@ -368,58 +329,6 @@ app.get('/auth/instagram/callback',
     res.redirect('/account');
   });
 
-// Facebook element
-//---------------------------------------------------
-// Redirect the user to Facebook for authentication.  When complete,
-// Facebook will redirect the user back to the application at
-//     /auth/facebook/callback
-/*app.get('/auth/facebook',
-  passport.authenticate('facebook', { scope: ['user_likes', 'user_photos', 'read_stream'] }),
-  function (req, res) { });
-
-// Facebook will redirect the user to this URL after approval.  Finish the
-// authentication process by attempting to obtain an access token.  If
-// access was granted, the user will be logged in.  Otherwise,
-// authentication has failed.
-app.get('/auth/facebook/callback',
-  passport.authenticate('facebook', {
-      successRedirect: '/account',
-      failureRedirect: '/login'
-  }));*/
-//fbgraph authentication
-app.get('/auth/facebook', function (req, res) {
-    if (!req.query.code) {
-        var authUrl = graph.getOauthUrl({
-            'client_id': process.env.FACEBOOK_APP_ID,
-            'redirect_uri': 'http://localhost:3000/auth/facebook',
-            'scope': 'user_about_me'//you want to update scope to what you want in your app
-        });
-
-        if (!req.query.error) {
-            res.redirect(authUrl);
-        } else {
-            res.send('access denied');
-        }
-        return;
-    }
-    graph.authorize({
-        'client_id': process.env.FACEBOOK_APP_ID,
-        'redirect_uri': 'http://localhost:3000/auth/facebook',
-        'client_secret': process.env.FACEBOOK_APP_SECRET,
-        'code': req.query.code
-    }, function (err, facebookRes) {
-        res.redirect('/UserHasLoggedIn');
-    });
-});
-
-app.get('/UserHasLoggedIn', function (req, res) {
-    graph.get('me', function (err, response) {
-        console.log(err); //if there is an error this will return a value
-        data = { facebookData: response };
-        res.render('facebook', data);
-    });
-});
-//---------------------------------------------------
 // Twitter element
 //---------------------------------------------------
 // Twitter authentication setup for Oauth
