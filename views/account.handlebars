@@ -5,29 +5,3 @@
 
 <p><a class="visButton" href="/c3visualization">View C3 Visualization</a></p>
 <p><a class="visButton" href="/visualization">View D3 Visualization</a></p>
-
-{{#if instagramAcct}}
-	<h3 class="header0">Welcome to your Instagram Account</h3>
-	<p class="accountUni0"><b>User's Information:</b></p>
-	<p class="accountUni"><b>ID:</b> {{instagramAcct.user.id}}</p>
-	<p class="accountUni"><b>Username:</b> {{instagramAcct.user.username}}</p>
-	<p class="accountUni"><b>Name:</b> {{instagramAcct.user.displayName}}</p>
-	<div style="margin:1.000em 0.000em;">
-	<div style="text-align:center;">
-		<p><a href="/photos" class="instaButton">Continue to your Instagram Photos</a></p>
-	</div>
-	</div>
-{{/if}}
-
-{{#if twitterAcct}}
-	<h3 class="header1">Welcome to your Facebook Account</h3>
-	<p class="accountUni0"><b>User's Information:</b></p>
-	<p class="accountUni"><b>ID:</b> {{twitterAcct.user.id}}</p>
-	<p class="accountUni"><b>Name:</b> {{twitterAcct.user.displayName}}</p>
-	<p class="accountUni"><b>Gender:</b> {{twitterAcct.user.gender}}</p>
-	<div style="margin:1.000em 0.000em;">
-	<div style="text-align:center;">
-		<p><a href="/facebookInfo" class="fbButton">Continue to your twitterAcct Feed</a></p>
-	</div>
-	</div>
-{{/if}}

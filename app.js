@@ -86,48 +86,46 @@ passport.use(new InstagramStrategy({
     clientID: INSTAGRAM_CLIENT_ID,
     clientSecret: INSTAGRAM_CLIENT_SECRET,
     callbackURL: INSTAGRAM_CALLBACK_URL
-  },
-  function(accessToken, refreshToken, profile, done) {
-    // asynchronous verification, for effect...
-  console.log(accessToken);
+    },
+    function(accessToken, refreshToken, profile, done) {
+        // asynchronous verification, for effect...
+        models.User.findOne({
+            "ig_id": profile.id
+            }, function(err, user) {
+                if (err) {
+                    return done(err); 
+                    }
+ 
+                //didnt find a user
+                if (!user) {
+                    newUser = new models.User({
+                        name: profile.username, 
+                        ig_id: profile.id,
+                        ig_access_token: accessToken
+                        });
 
-   models.User.findOne({
-    "ig_id": profile.id
-   }, function(err, user) {
-      if (err) {
-        return done(err); 
-      }
-      
-      //didnt find a user
-      if (!user) {
-        newUser = new models.User({
-          name: profile.username, 
-          ig_id: profile.id,
-          ig_access_token: accessToken
-        });
-
-        newUser.save(function(err) {
-          if(err) {
-            console.log(err);
-          } else {
-            console.log('user: ' + newUser.name + " created.");
-          }
-          return done(null, newUser);
-        });
-      } else {
+                newUser.save(function(err) {
+                    if(err) {
+                        console.log(err);
+                        } else {
+                    console.log('user: ' + newUser.name + " created.");
+                    }
+                return done(null, newUser);
+                });
+        } else {
         //update user here
-        user.ig_access_token = accessToken;
-        user.save();
-        process.nextTick(function () {
-          // To keep the example simple, the user's Instagram profile is returned to
-          // represent the logged-in user.  In a typical application, you would want
-          // to associate the Instagram account with a user record in your database,
-          // and return that user instead.
-          return done(null, user);
-        });
-      }
-   });
-  }
+         user.ig_access_token = accessToken;
+         user.save();
+         process.nextTick(function () {
+             // To keep the example simple, the user's Instagram profile is returned to
+             // represent the logged-in user.  In a typical application, you would want
+             // to associate the Instagram account with a user record in your database,
+             // and return that user instead.
+             return done(null, user);
+         });
+         }
+      });
+    }
 ));
 
 // Facebook element
@@ -321,7 +319,7 @@ app.get('/igMediaCounts', ensureAuthenticatedInstagram, function(req, res){
           // an array of asynchronous functions
           var asyncTasks = [];
           var mediaCounts = [];
-           ig_id
+
           data.forEach(function(item){
             asyncTasks.push(function(callback){
               // asynchronous function!
