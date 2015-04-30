@@ -382,6 +382,7 @@ app.get('/auth/twitter', passport.authenticate('twitter'), function (req, res) {
 app.get('/auth/twitter/callback',
 	passport.authenticate('twitter', { failureRedirect: '/' }),
 	function (req, res) {
+      console.log(req.user);
 	    res.redirect('/twitter');
 	});
 
@@ -389,6 +390,7 @@ app.get('/twitter', ensureAuthenticatedTwitter, function (req, res) {
     // Use Twitter's Oauth as previously it's an array set up with the information
     var T = new twit(twitterOauth);
     T.get('/users/show', function (err, reply) {
+        console.log(reply);
         console.log(err); // If there is an error this will return a value
         data = { twitterUser: reply };
         res.render('twitterMain', data);
