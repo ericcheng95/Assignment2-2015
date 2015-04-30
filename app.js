@@ -89,6 +89,8 @@ passport.use(new InstagramStrategy({
   },
   function(accessToken, refreshToken, profile, done) {
     // asynchronous verification, for effect...
+  console.log(accessToken);
+
    models.User.findOne({
     "ig_id": profile.id
    }, function(err, user) {

@@ -1,0 +1,86 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'install', 'OAuth2Strategy' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.36
+4 warn package.json mywebapp@0.0.1 No repository field.
+5 warn package.json instagram@0.0.4 Invalid filename in 'files' list:
+6 verbose readDependencies using package.json deps
+7 verbose cache add [ 'OAuth2Strategy', null ]
+8 verbose cache add name=undefined spec="OAuth2Strategy" args=["OAuth2Strategy",null]
+9 verbose parsed url { protocol: null,
+9 verbose parsed url   slashes: null,
+9 verbose parsed url   auth: null,
+9 verbose parsed url   host: null,
+9 verbose parsed url   port: null,
+9 verbose parsed url   hostname: null,
+9 verbose parsed url   hash: null,
+9 verbose parsed url   search: null,
+9 verbose parsed url   query: null,
+9 verbose parsed url   pathname: 'OAuth2Strategy',
+9 verbose parsed url   path: 'OAuth2Strategy',
+9 verbose parsed url   href: 'OAuth2Strategy' }
+10 silly lockFile 1e9b02d1-OAuth2Strategy OAuth2Strategy
+11 verbose lock OAuth2Strategy /Users/ericcheng/.npm/1e9b02d1-OAuth2Strategy.lock
+12 silly lockFile 1e9b02d1-OAuth2Strategy OAuth2Strategy
+13 silly lockFile 1e9b02d1-OAuth2Strategy OAuth2Strategy
+14 verbose addNamed [ 'OAuth2Strategy', '' ]
+15 verbose addNamed [ null, '*' ]
+16 silly lockFile aed9a3cc-OAuth2Strategy OAuth2Strategy@
+17 verbose lock OAuth2Strategy@ /Users/ericcheng/.npm/aed9a3cc-OAuth2Strategy.lock
+18 silly addNameRange { name: 'OAuth2Strategy', range: '*', hasData: false }
+19 verbose request where is /OAuth2Strategy
+20 verbose request registry https://registry.npmjs.org/
+21 verbose request id 4d89f8b32fed0597
+22 verbose url raw /OAuth2Strategy
+23 verbose url resolving [ 'https://registry.npmjs.org/', './OAuth2Strategy' ]
+24 verbose url resolved https://registry.npmjs.org/OAuth2Strategy
+25 verbose request where is https://registry.npmjs.org/OAuth2Strategy
+26 info trying registry request attempt 1 at 16:47:41
+27 http GET https://registry.npmjs.org/OAuth2Strategy
+28 http 404 https://registry.npmjs.org/OAuth2Strategy
+29 verbose headers { date: 'Wed, 29 Apr 2015 23:47:42 GMT',
+29 verbose headers   server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+29 verbose headers   'content-type': 'application/json',
+29 verbose headers   'cache-control': 'max-age=0',
+29 verbose headers   'content-length': '51',
+29 verbose headers   'accept-ranges': 'bytes',
+29 verbose headers   via: '1.1 varnish',
+29 verbose headers   age: '0',
+29 verbose headers   'x-served-by': 'cache-sjc3135-SJC',
+29 verbose headers   'x-cache': 'MISS',
+29 verbose headers   'x-cache-hits': '0',
+29 verbose headers   'x-timer': 'S1430351262.122721,VS0,VE91',
+29 verbose headers   'keep-alive': 'timeout=10, max=50',
+29 verbose headers   connection: 'Keep-Alive' }
+30 silly registry.get cb [ 404,
+30 silly registry.get   { date: 'Wed, 29 Apr 2015 23:47:42 GMT',
+30 silly registry.get     server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+30 silly registry.get     'content-type': 'application/json',
+30 silly registry.get     'cache-control': 'max-age=0',
+30 silly registry.get     'content-length': '51',
+30 silly registry.get     'accept-ranges': 'bytes',
+30 silly registry.get     via: '1.1 varnish',
+30 silly registry.get     age: '0',
+30 silly registry.get     'x-served-by': 'cache-sjc3135-SJC',
+30 silly registry.get     'x-cache': 'MISS',
+30 silly registry.get     'x-cache-hits': '0',
+30 silly registry.get     'x-timer': 'S1430351262.122721,VS0,VE91',
+30 silly registry.get     'keep-alive': 'timeout=10, max=50',
+30 silly registry.get     connection: 'Keep-Alive' } ]
+31 silly lockFile aed9a3cc-OAuth2Strategy OAuth2Strategy@
+32 silly lockFile aed9a3cc-OAuth2Strategy OAuth2Strategy@
+33 error 404 404 Not Found: OAuth2Strategy
+33 error 404
+33 error 404 'OAuth2Strategy' is not in the npm registry.
+33 error 404 You should bug the author to publish it
+33 error 404 It was specified as a dependency of 'mywebapp'
+33 error 404
+33 error 404 Note that you can also install from a
+33 error 404 tarball, folder, or http url, or git url.
+34 error System Darwin 14.1.0
+35 error command "node" "/usr/local/bin/npm" "install" "OAuth2Strategy"
+36 error cwd /Users/ericcheng/Documents/HCI/Assignment2-2015
+37 error node -v v0.10.36
+38 error npm -v 1.4.28
+39 error code E404
+40 verbose exit [ 1, true ]
