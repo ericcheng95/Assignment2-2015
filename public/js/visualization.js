@@ -1,4 +1,4 @@
-var margin = {top: 20, right: 20, bottom: 100, left: 40};
+var margin = { top: 20, right: 20, bottom: 100, left: 40 };
 var width = 960 - margin.left - margin.right;
 var height = 500 - margin.top - margin.bottom;
 
@@ -26,41 +26,27 @@ var svg = d3.select("body").append("svg")
   .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-/*var tip = d3.tip()
-  .attr('class', 'd3-tip')
-  .offset([-10, 0])
-  .html(function(d) {
-    return "<strong>Media Count: </strong> <span style='color: red'>" +d.counts.media + "</span>";
-  })*/
-
-//svg.call(tip);
-
-//app.get('/igMediaCounts', ensureAuthenticationInstagram)
-
 //get json object which contains media counts
-d3.json('/igMediaCounts', function(error, data) {
+d3.json('/igMediaCounts', function (error, data) {
 
-  /*data.users.sort(function(a, b){
-    return (a.counts.media - b.counts.media);
-  });*/
+    //set domain of x to be all the usernames contained in the data
+    scaleX.domain(data.users.map(function (d) { return d.username; }));
+    //set domain of y to be from 0 to the maximum media count returned
+    scaleY.domain([0, d3.max(data.users, function (d) { return d.counts.media; })]);
 
-  //set domain of x to be all the usernames contained in the data
-  scaleX.domain(data.users.map(function(d) { return d.username; }));
-  //set domain of y to be from 0 to the maximum media count returned
-  scaleY.domain([0, d3.max(data.users, function(d) { return d.counts.media; })]);
-
+//<<<<<<< HEAD
   //set up x axis
-  svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")") //move x-axis to the bottom
-    .call(xAxis)
-    .selectAll("text")  
-    .style("text-anchor", "end")
-    .attr("dx", "-.8em")
-    .attr("dy", ".15em")
-    .attr("transform", function(d) {
-      return "rotate(-65)" 
-    });
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")") //move x-axis to the bottom
+      .call(xAxis)
+      .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("dx", "-.8em")
+      .attr("dy", ".15em")
+      .attr("transform", function (d) {
+          return "rotate(-65)"
+      });
 
   //set up y axis
   svg.append("g")
@@ -108,4 +94,42 @@ d3.json('/igMediaCounts', function(error, data) {
       .selectAll("text")
       .style("text-anchor", "end")
   });
+
 });
+
+// The Sorting Button
+// Has the codefor the button to sort the data
+function sortData() {
+    //get json object which contains media counts
+    d3.json('/igMediaCounts', function (error, data) {
+
+        // Sorting algorithm
+        data.users.sort(function (a, b) {
+            return (a.counts.media - b.counts.media);
+        });
+
+        //set domain of x to be all the usernames contained in the data
+        scaleX.domain(data.users.map(function (d) { return d.username; }));
+        //set domain of y to be from 0 to the maximum media count returned
+        scaleY.domain([0, d3.max(data.users, function (d) { return d.counts.media; })]);
+
+        // Select the section we want to apply our changes to
+        var svg = d3.select("body").transition();
+
+        // Make the changes
+        svg.select(".x.axis") // change the x axis
+            .duration(750)
+            .call(xAxis);
+        svg.select(".y.axis") // change the y axis
+            .duration(750)
+            .call(yAxis);
+
+        //set up bars in bar graph (Where the problem lies)
+        svg.select(".bar")
+          .duration(750)
+          .call(scaleX)
+          .call(scaleY);
+
+    });
+
+}
