@@ -85,20 +85,27 @@ d3.json('/igMediaCounts', function(error, data) {
     /*.on('mouseover', tip,show)
     .on('mouseout', tip.hide);*/
 
- /*d3.select("input").on("click", function() {
+ d3.select("#input").on("click", function() {
+    console.log("TEST");
+
     this.disabled = true;
     var scaleX_sorted = scaleX.domain(data.users.sort(function(a, b){
-    return (a.counts.media - b.counts.media);
-  })
-    .map(function(d) {return d.username;}));
+      return (a.counts.media - b.counts.media);
+    })
+    .map(function(d) {
+      return d.username;
+    }));
 
-    var transition - svg.transition().duration(500);
+    var transition = svg.transition().duration(500);
     transition.selectAll("bar")
-      .attr("x", function(d) {return scaleX(d.username); });
+      .attr("x", function(d) {
+        return scaleX(d.username);
+      }
+    );
 
     transition.select(".x.axis")
       .call(xAxis)
       .selectAll("text")
       .style("text-anchor", "end")
-  });*/
+  });
 });
