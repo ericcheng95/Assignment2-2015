@@ -27,14 +27,13 @@ var svg = d3.select("body").append("svg")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 //get json object which contains media counts
-d3.json('/igMediaCounts', function (error, data) {
+d3.json('/igMediaCounts', function(error, data) {
 
     //set domain of x to be all the usernames contained in the data
-    scaleX.domain(data.users.map(function (d) { return d.username; }));
+    scaleX.domain(data.users.map(function(d) { return d.username; }));
     //set domain of y to be from 0 to the maximum media count returned
-    scaleY.domain([0, d3.max(data.users, function (d) { return d.counts.media; })]);
+    scaleY.domain([0, d3.max(data.users, function(d) { return d.counts.media; })]);
 
-//<<<<<<< HEAD
   //set up x axis
     svg.append("g")
       .attr("class", "x axis")
@@ -71,50 +70,33 @@ d3.json('/igMediaCounts', function (error, data) {
     /*.on('mouseover', tip,show)
     .on('mouseout', tip.hide);*/
 
- d3.select("#input").on("click", function() {
-    console.log("TEST");
-
-    this.disabled = true;
-    var scaleX_sorted = scaleX.domain(data.users.sort(function(a, b){
-      return (a.counts.media - b.counts.media);
-    })
-    .map(function(d) {
-      return d.username;
-    }));
-
-    var transition = svg.transition().duration(500);
-    transition.selectAll("bar")
-      .attr("x", function(d) {
-        return scaleX(d.username);
-      }
-    );
-
-    transition.select(".x.axis")
-      .call(xAxis)
-      .selectAll("text")
-      .style("text-anchor", "end")
-  });
-
 });
 
 // The Sorting Button
 // Has the codefor the button to sort the data
 function sortData() {
     //get json object which contains media counts
-    d3.json('/igMediaCounts', function (error, data) {
+    d3.json('/igMediaCounts', function(error, data) {
 
         // Sorting algorithm
-        data.users.sort(function (a, b) {
+        data.users.sort(function(a, b) {
             return (a.counts.media - b.counts.media);
         });
 
         //set domain of x to be all the usernames contained in the data
-        scaleX.domain(data.users.map(function (d) { return d.username; }));
+        scaleX.domain(data.users.map(function(d) { return d.username; }));
         //set domain of y to be from 0 to the maximum media count returned
-        scaleY.domain([0, d3.max(data.users, function (d) { return d.counts.media; })]);
+        scaleY.domain([0, d3.max(data.users, function(d) { return d.counts.media; })]);
 
         // Select the section we want to apply our changes to
         var svg = d3.select("body").transition();
+
+
+        //set up bars in bar graph (Where the problem lies)
+        svg.select(".bar")
+          .duration(750)
+          .call(scaleX)
+          .call(scaleY);
 
         // Make the changes
         svg.select(".x.axis") // change the x axis
@@ -124,11 +106,6 @@ function sortData() {
             .duration(750)
             .call(yAxis);
 
-        //set up bars in bar graph (Where the problem lies)
-        svg.select(".bar")
-          .duration(750)
-          .call(scaleX)
-          .call(scaleY);
 
     });
 
