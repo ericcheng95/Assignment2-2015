@@ -354,6 +354,14 @@ app.get('/c3visualization', ensureAuthenticatedInstagram, function (req, res){
   res.render('c3visualization');
 });
 
+app.get('/visualizationPart2', ensureAuthenticatedInstagram, function (req, res) {
+    res.render('visualizationPart2');
+});
+
+app.get('/c3visualizationPart2', ensureAuthenticatedInstagram, function (req, res) {
+    res.render('c3visualizationPart2');
+});
+
 app.get('/auth/instagram',
   passport.authenticate('instagram'),
   function(req, res){
