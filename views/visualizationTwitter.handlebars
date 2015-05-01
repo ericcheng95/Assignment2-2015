@@ -1,5 +1,22 @@
 <h1> Media Count of Your Twitter Followers</h1>
 <div id="chart"></div>
 
+          {{#each twitterData.users}}
+
+            <h5>
+
+            Their Name  - {{name}} <br>
+
+            Their Twitter Handler - {{screen_name}} <br>
+
+            How many Friends they have - {{friends_count}} <br>
+
+            How many Followers they have - {{followers_count}} <br>
+
+
+            <h5>
+
+          {{/each}}
+
 <script src="js/visualizationTwitter.js"></script>
 

@@ -237,9 +237,6 @@ app.get('/login', function(req, res){
 });
 
 app.get('/account', ensureAuthenticated, function (req, res) {
-    /*var temp = {};
-    temp.user = req.user;
-    res.render('account', { instagramAcct: temp });*/
     res.render('account', {user: req.user});
 });
 
@@ -309,7 +306,7 @@ app.get('/igMediaCounts', ensureAuthenticatedInstagram, function(req, res){
 });
 
 // Twitter element (at work)
-/*app.get('/twMediaCounts', ensureAuthenticatedTwitter, function (req, res) {
+app.get('/twFriendCounts', ensureAuthenticatedTwitter, function (req, res) {
     var query = models.User.where({ tw_id: req.user.tw_id });
     query.findOne(function (err, user) {
         if (err) return err;
@@ -320,7 +317,7 @@ app.get('/igMediaCounts', ensureAuthenticatedInstagram, function(req, res){
                 complete: function (data) {
                     // an array of asynchronous functions
                     var asyncTasks = [];
-                    var mediaCounts = [];
+                    var friendCounts = [];
 
                     data.forEach(function (item) {
                         asyncTasks.push(function (callback) {
@@ -329,7 +326,7 @@ app.get('/igMediaCounts', ensureAuthenticatedInstagram, function(req, res){
                                 user_id: item.id,
                                 access_token: user.tw_access_token,
                                 complete: function (data) {
-                                    mediaCounts.push(data);
+                                    friendCounts.push(data);
                                     callback();
                                 }
                             });
@@ -340,13 +337,13 @@ app.get('/igMediaCounts', ensureAuthenticatedInstagram, function(req, res){
                     async.parallel(asyncTasks, function (err) {
                         // All tasks are done now
                         if (err) return err;
-                        return res.json({ users: mediaCounts });
+                        return res.json({ users: friends_count });
                     });
                 }
             });
         }
     });
-});*/
+});
 // ---------------------------
 
 app.get('/visualization', ensureAuthenticatedInstagram, function (req, res){
@@ -389,7 +386,7 @@ app.get('/auth/twitter/callback',
 app.get('/twitter', ensureAuthenticatedTwitter, function (req, res) {
     // Use Twitter's Oauth as previously it's an array set up with the information
     var T = new twit(twitterOauth);
-    T.get('/users/show', function (err, reply) {
+    T.get('/friends/list', function (err, reply) {
         console.log(reply);
         console.log(err); // If there is an error this will return a value
         data = { twitterUser: reply };

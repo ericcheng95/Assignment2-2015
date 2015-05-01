@@ -27,12 +27,14 @@ var svg = d3.select("body").append("svg")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 //get json object which contains media counts
-d3.json('/igMediaCounts', function (error, data) {
+d3.json('/friends/list', function (error, data) {
+  console.log("TEST2");
+  console.log(data);
 
   //set domain of x to be all the usernames contained in the data
-  scaleX.domain(data.users.map(function(d) { return d.username; }));
+  scaleX.domain(data.users.map(function(d) { return d.name; }));
   //set domain of y to be from 0 to the maximum media count returned
-  scaleY.domain([0, d3.max(data.users, function(d) { return d.counts.media; })]);
+  scaleY.domain([0, d3.max(data.users, function(d) { return d.friends_count; })]);
 
   //set up x axis
   svg.append("g")
@@ -56,46 +58,34 @@ d3.json('/igMediaCounts', function (error, data) {
     .attr("y", 6)
     .attr("dy", ".71em")
     .style("text-anchor", "end")
-    .text("Number of Photos");
+    .text("Number of Friends");
 
   //set up bars in bar graph
   svg.selectAll(".bar")
     .data(data.users)
     .enter().append("rect")
     .attr("class", "bar")
-    .attr("x", function(d) { return scaleX(d.username); })
+    .attr("x", function(d) { return scaleX(d.name); })
     .attr("width", scaleX.rangeBand())
-    .attr("y", function(d) { return scaleY(d.counts.media); })
-    .attr("height", function(d) { return height - scaleY(d.counts.media); })
-    //.attr("hover", function(d) {return })
-    //.text("TEST")
-    .on('mouseover', function(d) {
-      d3.select(this).style({opacity:'1.0',})
-      d3.select(this).select("text")
-      d3.select(this).select("text").style({opacity:'1.0'});
-    })
-    .on('mouseout', function(d) {
-      d3.select(this).style({opacity:'1.0'})
-      d3.select(this).select("text").style({opacity:'0.0'});
-    });
-
+    .attr("y", function(d) { return scaleY(d.friends_count); })
+    .attr("height", function(d) { return height - scaleY(d.friends_count); });
 });
 
 // The Sorting Button
 // Has the codefor the button to sort the data
 function sortData() {
     //get json object which contains media counts
-    d3.json('/igMediaCounts', function (error, data) {
+    d3.json('/friends/list', function (error, data) {
 
         // Sorting algorithm
         data.users.sort(function (a, b) {
-            return (a.counts.media - b.counts.media);
+            return (a.friends_count - b.friends_count);
         });
 
         //set domain of x to be all the usernames contained in the data
-        scaleX.domain(data.users.map(function (d) { return d.username; }));
+        scaleX.domain(data.users.map(function (d) { return d.name; }));
         //set domain of y to be from 0 to the maximum media count returned
-        scaleY.domain([0, d3.max(data.users, function (d) { return d.counts.media; })]);
+        scaleY.domain([0, d3.max(data.users, function (d) { return d.friends_count; })]);
 
         // Select the section we want to apply our changes to
         var svg = d3.select("body").transition();
