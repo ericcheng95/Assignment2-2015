@@ -21,16 +21,8 @@
           ],
           axes: {
             yCountsFollowers: 'y2'
-          }/*,
-          types: {
-            yCountsFollowers: 'bar'
-          }*/
-        }/*,
-        axis: {
-          y2: {
-            show: true
           }
-        }*/
+        }
       });
 
     });
