@@ -10,6 +10,45 @@ body {
   background-size: cover;
 }
 
+h1.header0 {
+    font-family: Tahoma, Geneva, sans-serif;
+    margin:0.500em 0.000em;
+    padding:0px;
+    text-align:center;
+    background-color: rgba(92, 46, 0, 0.5);
+    color:#331A00;
+    font-size: 2.450em;
+}
+
+p.p00 {
+    font-family: Tahoma, Geneva, sans-serif;
+    margin:60px 0px;
+    padding:0px;
+    text-align:center;
+    color:#331A00;
+    font-size: 2.450em;
+}
+p.p01 {
+    font-family: Tahoma, Geneva, sans-serif;
+    margin:25px 0px;
+    padding:0px;
+    text-align:center;
+    color:#331A00;
+    font-size: 1.250em;
+}
+p.p02 {
+    font-family: Tahoma, Geneva, sans-serif;
+    padding:0px;
+    text-align:center;
+}
+
+body.jsGraph {
+    text-align:center;
+}
+body.accountInfo {
+    text-align:center;
+}
+
 .visButton {
 	-moz-box-shadow:inset 0px 1px 0px 0px #a6827e;
 	-webkit-box-shadow:inset 0px 1px 0px 0px #a6827e;
