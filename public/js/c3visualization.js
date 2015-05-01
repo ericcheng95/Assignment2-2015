@@ -2,7 +2,7 @@
   $.getJSON( '/igMediaCounts')
     .done(function( data ) {
       var yCounts = data.users.map(function(item){
-          return item.counts.media;
+          return item.counts.follows;
       });
 
       yCounts.unshift('Media Count');
