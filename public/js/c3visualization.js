@@ -1,19 +1,37 @@
 (function() {
   $.getJSON( '/igMediaCounts')
     .done(function( data ) {
-      var yCounts = data.users.map(function(item){
-          return item.counts.follows;
+      var yCountsMedia = data.users.map(function(item){
+          return item.counts.media;
       });
 
-      yCounts.unshift('Media Count');
+      var yCountsFollowers = data.users.map(function(item){
+          return item.counts.followed_by;
+      });
+
+      yCountsMedia.unshift('Media Count');
+      yCountsFollowers.unshift('Follower Count');
 
       var chart = c3.generate({
         bindto: '#chart',
         data: {
           columns: [
-            yCounts
-          ]
+            yCountsMedia,
+            yCountsFollowers
+          ],
+          axes: {
+            yCountsFollowers: 'y2'
+          },
+          types: {
+            yCountsFollowers: 'bar'
+          }
+        },
+        axis: {
+          y2: {
+            show: true
+          }
         }
       });
+
     });
 })();
