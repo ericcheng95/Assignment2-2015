@@ -72,26 +72,15 @@ d3.json('/igMediaCounts', function(error, data) {
 
 });
 
-// For sorting purposes
-var sortOrder = false;
-
-// The Sorting Button
+// The Ascending Sorting Button
 // Has the codefor the button to sort the data
-function sortData() {
+function sortAscending() {
     //get json object which contains media counts
     d3.json('/igMediaCounts', function (error, data) {
 
-        sortOrder = !sortOrder;
-
         // Sorting algorithm
         data.users.sort(function(a, b) {
-            //return (a.counts.media - b.counts.media);
-            //return d3.ascending(a.counts.media, b.counts.media);
-            if (sortOrder) {
-                return d3.ascending(a.counts.media, b.counts.media);
-            } else {
-                return d3.descending(a.counts.media, b.counts.media);
-            }
+            return d3.ascending(a.counts.media, b.counts.media);
         });
 
         //set domain of x to be all the usernames contained in the data
@@ -101,27 +90,6 @@ function sortData() {
 
         // Select the section we want to apply our changes to
         var svg = d3.select("body").transition();
-
-        /*//set up bars in bar graph (Where the problem lies)
-        svg.select(".bar")
-          .duration(750)
-          .call(scaleX)
-          .call(scaleY);
-
-        // Make the changes
-        svg.select(".x.axis") // change the x axis
-            .duration(750)
-            .call(xAxis);
-        svg.select(".y.axis") // change the y axis
-            .duration(750)
-            .call(yAxis);*/
-
-        // Copy-on-write since tweens are evaluated after a delay.
-        /*var x0 = x.domain(data.sort(this.checked
-            ? function (a, b) { return b.counts.media - a.counts.media; }
-            : function (a, b) { return d3.ascending(a.counts.media, b.counts.media); })
-            .map(function (d) { return d.username; }))
-            .copy();*/
 
         svg.selectAll(".bar")
         .sort(function (a, b) { return scaleX(a.counts.media) - scaleX(b.counts.media); });
@@ -136,9 +104,46 @@ function sortData() {
         transition.select(".x.axis")
             .call(xAxis)
             .selectAll("g")
+            .selectAll("text")
+            .style("text-anchor", "end")
             .delay(delay);
-
-
     });
+}
 
+// The Descending Sorting Button
+// Has the codefor the button to sort the data
+function sortDescending() {
+    //get json object which contains media counts
+    d3.json('/igMediaCounts', function (error, data) {
+
+        // Sorting algorithm
+        data.users.sort(function (a, b) {
+            return d3.descending(a.counts.media, b.counts.media);
+        });
+
+        //set domain of x to be all the usernames contained in the data
+        scaleX.domain(data.users.map(function (d) { return d.username; }));
+        //set domain of y to be from 0 to the maximum media count returned
+        scaleY.domain([0, d3.max(data.users, function (d) { return d.counts.media; })]);
+
+        // Select the section we want to apply our changes to
+        var svg = d3.select("body").transition();
+
+        svg.selectAll(".bar")
+        .sort(function (a, b) { return scaleX(a.counts.media) - scaleX(b.counts.media); });
+
+        var transition = svg.transition().duration(500),
+            delay = function (d, i) { return i * 10; };
+
+        transition.selectAll(".bar")
+            .delay(delay)
+            .attr("x", function (d) { return scaleX(d.username); });
+
+        transition.select(".x.axis")
+            .call(xAxis)
+            .selectAll("g")
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .delay(delay);
+    });
 }
