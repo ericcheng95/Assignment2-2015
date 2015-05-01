@@ -19,12 +19,24 @@ var yAxis = d3.svg.axis()
   .scale(scaleY)
   .orient("left");
 
+// Tip Formation
+var tip = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function (d) {
+      return "<p><u>" + d.username + "</u></p>"
+          + "<p>" + d.full_name + "</p>"
+          + "<img src=\"" + d.profile_picture + "\" alt=\"Instagram Photo\">";
+  });
+
 //create svg
 var svg = d3.select("body").append("svg")
   .attr("width", width + margin.left + margin.right)
   .attr("height", height + margin.top + margin.bottom)
   .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+svg.call(tip);
 
 //get json object which contains media counts
 d3.json('/igMediaCounts', function(error, data) {
@@ -67,9 +79,9 @@ d3.json('/igMediaCounts', function(error, data) {
     .attr("x", function(d) { return scaleX(d.username); })
     .attr("width", scaleX.rangeBand())
     .attr("y", function(d) { return scaleY(d.counts.followed_by); })
-    .attr("height", function(d) { return height - scaleY(d.counts.followed_by); });
-    /*.on('mouseover', tip,show)
-    .on('mouseout', tip.hide);*/
+    .attr("height", function(d) { return height - scaleY(d.counts.followed_by); })
+    .on('mouseover', tip.show)
+    .on('mouseout', tip.hide);
 
 });
 
